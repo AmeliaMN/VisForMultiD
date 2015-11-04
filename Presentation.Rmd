@@ -1,7 +1,7 @@
 ---
 title: "Using data visualization to find patterns in multidimensional data"
 author: "Amelia McNamara @AmeliaMN"
-date: "June 27, 2015"
+date: "November 4, 2015"
 output: 
   ioslides_presentation:
     includes:
@@ -12,7 +12,11 @@ output:
 
 ## About me
 
-I'm an academic-- soon to be a Statistical and Data Sciences professor at Smith College. So, the methods I'm talking about came out of academia. They're still useful!
+Professor of Statistical and Data Sciences at Smith College, MassMutual Faculty Fellow. 
+
+I received my PhD in statistics from UCLA, and my bachelor's degree (double major in Math and English) from Macalester College. Somewhere in there I also went to art school for a year. 
+
+As a result, I love data visualization, both the plots we make for others and those we make for ourselves. 
 
 ```{r, echo=FALSE}
 library(knitr)
@@ -24,36 +28,54 @@ knit_hooks$set(custom_plot = hook_plot_custom)
 
 ## Following along
 
-All my code is on github, [https://github.com/AmeliaMN/BigDataDay](https://github.com/AmeliaMN/BigDataDay), or you can see the slides hosted on my site, [http://bit.ly/BDD15_viz](http://bit.ly/BDD15_viz).
+All my code is on github, [https://github.com/AmeliaMN/VisForMultiD](https://github.com/AmeliaMN/VisForMultiD), or you can see the slides hosted on my site, [http://bit.ly/VisForMultiD](http://bit.ly/VisForMultiD).
 
-## Big thoughts
+## John Tukey
+<div class="columns-2">
+> "The greatest value of a picture is when it forces us to notice what we never expected to see." - John Tukey, 1977
 
-Big data versus multidimensional data
+<div class="centered"><img src="EDA.jpg" height="500"></div>
+</div>
 
-Data visualizations we make for others versus data visualizations we make for ourselves
 
-"The greatest value of a picture is when it forces us to notice what we never expected to see." - John Tukey, 1977
+## Example: boxplots
+<div class="centered"><img src="1130141904.jpg" height="500"></div>
+
+
+## Some preliminary code
+```{r packages, warning=FALSE, message=FALSE}
+library(ggplot2)
+library(dplyr)
+
+set.seed(123)
+```
 
 ## Data for this talk
 ```{r loaddata}
-library(ggplot2)
 data(diamonds)
-set.seed(123)
-diamonds <- diamonds[sample(500),]
 str(diamonds)
+mini_d <- diamonds[sample(500),]
 ```
 
 # Standard pairs plot / scatterplot matrix
 
 ----
 ```{r pairsplot, out.height="550", fig.align="center"}
-plot(diamonds)
+plot(mini_d)
 ```
 
 ----
-```{r subpairsplot, warning=FALSE, message=FALSE, fig.align="center"}
-library(dplyr)
-select(diamonds, carat, depth, table) %>% plot()
+```{r subpairsplot,  fig.align="center"}
+mini_d %>% 
+  select(carat, depth, table) %>% 
+  plot()
+```
+
+----
+```{r subpairsplot2, fig.align="center"}
+mini_d %>%
+  select(x,y,z) %>%
+  plot()
 ```
 
 # Generalized pairs plot
@@ -67,20 +89,26 @@ Emerson, J. W., Green, W. A., Schloerke, B., Crowley, J., Cook, D., Hofmann, H.,
 [http://bit.ly/gpairs](http://bit.ly/gpairs)
 
 ----
-```{r gpairsplot2, message=FALSE, fig.keep="none"}
+```{r gpairsplot2, message=FALSE, eval=FALSE}
 library(gpairs)
-gpairs(diamonds, outer.rot=c(90, 0))
+gpairs(mini_d, outer.rot=c(90, 0))
 ```
 
 <div class="centered"><img src="pairsplot.png" height="500" width="500"></div>
 
 ----
-```{r gpairsplot3, message=FALSE, fig.keep="none"}
-select(diamonds, carat, cut, color, depth) %>% gpairs(outer.rot=c(90, 0))
+```{r gpairsplot3, message=FALSE, eval=FALSE}
+mini_d %>%
+  select(carat, cut, color, depth) %>% 
+  gpairs(outer.rot=c(90, 0))
 ```
 <div class="centered"><img src="pairsplot3.png" height="500" width="500"></div>
 
 # Grand Tour
+
+## John Tukey on the computer [http://bit.ly/prim_9](http://bit.ly/prim_9)
+
+<div class="centered"><img src="prim9.jpeg" height="500"></div>
 
 
 ## Grand Tour
@@ -93,12 +121,14 @@ Wickham, H., Cook, D., Hofmann, H., and Buja, A. (2011). tourr: An R package for
 ----
 ```{r, eval=FALSE}
 library(tourr)
-select(diamonds, carat, depth, table, x, y, z) %>% animate(grand_tour(), display = display_xy(), fps=15)
+mini_d %>%
+  select(carat, depth, table, x, y, z) %>% 
+  animate(grand_tour(), display = display_xy(), fps=15)
 ```
 
 ```{r tourr, custom_plot=TRUE, fig.show='animate', fig.ext='png', echo=FALSE, message=FALSE, fig.num=300, interval=0.09, aniopts='loop, controls, autoplay', loopMode='sweep'}
 library(tourr)
-select(diamonds, carat, depth, table, x, y, z) %>% tourr::render(grand_tour(d = 2), display = display_xy(), frames=300, apf=1/15, dev="png", fig_path("%1d.png"), width=480, height=480)
+select(mini_d, carat, depth, table, x, y, z) %>% tourr::render(grand_tour(d = 2), display = display_xy(), frames=300, apf=1/15, dev="png", fig_path("%1d.png"), width=480, height=480)
 Sys.sleep(1)
 ```
 
@@ -114,8 +144,8 @@ Wickham, H., Cook, D., Hofmann, H., and Buja, A. (2010). Graphical inference for
 ```{r inference}
 library(nullabor)
 library(ggplot2)
-qplot(carat, depth, data=diamonds) %+%
-  lineup(null_permute('carat'), diamonds) +
+qplot(carat, depth, data=mini_d) %+%
+  lineup(null_permute('carat'), mini_d) +
   facet_wrap(~.sample)
 ```
 
@@ -135,7 +165,7 @@ Tennekes, M., de Jonge, E., and Daas, P. J., H. (2013). Visualizing and inspecti
 ----
 ```{r, message=FALSE}
 library(tabplot)
-tableplot(diamonds)
+tableplot(mini_d)
 ```
 
 ## CSV fingerprint

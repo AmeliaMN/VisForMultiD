@@ -10,7 +10,6 @@
 
 
 
-  <meta name="date" content="2015-06-27" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -93,60 +92,86 @@
       <h1 data-config-title><!-- populated from slide_config.json --></h1>
       <h2 data-config-subtitle><!-- populated from slide_config.json --></h2>
       <p data-config-presenter><!-- populated from slide_config.json --></p>
-            <p style="margin-top: 6px; margin-left: -2px;">June 27, 2015</p>
+            <p style="margin-top: 6px; margin-left: -2px;">November 4, 2015</p>
           </hgroup>
   </slide>
 
 <slide class=''><hgroup><h2>About me</h2></hgroup><article  id="about-me">
 
-<p>I&#39;m an academic&#8211; soon to be a Statistical and Data Sciences professor at Smith College. So, the methods I&#39;m talking about came out of academia. They&#39;re still useful!</p>
+<p>Professor of Statistical and Data Sciences at Smith College, MassMutual Faculty Fellow.</p>
+
+<p>I received my PhD in statistics from UCLA, and my bachelor&#39;s degree (double major in Math and English) from Macalester College. Somewhere in there I also went to art school for a year.</p>
+
+<p>As a result, I love data visualization, both the plots we make for others and those we make for ourselves.</p>
 
 </article></slide><slide class=''><hgroup><h2>Following along</h2></hgroup><article  id="following-along">
 
-<p>All my code is on github, <a href='https://github.com/AmeliaMN/BigDataDay' title=''><a href='https://github.com/AmeliaMN/BigDataDay' title=''>https://github.com/AmeliaMN/BigDataDay</a></a>, or you can see the slides hosted on my site, <a href='http://bit.ly/BDD15_viz' title=''><a href='http://bit.ly/BDD15_viz' title=''>http://bit.ly/BDD15_viz</a></a>.</p>
+<p>All my code is on github, <a href='https://github.com/AmeliaMN/VisForMultiD' title=''><a href='https://github.com/AmeliaMN/VisForMultiD' title=''>https://github.com/AmeliaMN/VisForMultiD</a></a>, or you can see the slides hosted on my site, <a href='http://bit.ly/VisForMultiD' title=''><a href='http://bit.ly/VisForMultiD' title=''>http://bit.ly/VisForMultiD</a></a>.</p>
 
-</article></slide><slide class=''><hgroup><h2>Big thoughts</h2></hgroup><article  id="big-thoughts">
+</article></slide><slide class=''><hgroup><h2>John Tukey</h2></hgroup><article  id="john-tukey">
 
-<p>Big data versus multidimensional data</p>
-
-<p>Data visualizations we make for others versus data visualizations we make for ourselves</p>
-
+<div class="columns-2">
+<blockquote>
 <p>&quot;The greatest value of a picture is when it forces us to notice what we never expected to see.&quot; - John Tukey, 1977</p>
+</blockquote>
+
+<div class="centered">
+<img src="EDA.jpg" height="500"></div></div>
+
+</article></slide><slide class=''><hgroup><h2>Example: boxplots</h2></hgroup><article  id="example-boxplots">
+
+<div class="centered">
+<img src="1130141904.jpg" height="500"></div>
+
+</article></slide><slide class=''><hgroup><h2>Some preliminary code</h2></hgroup><article  id="some-preliminary-code">
+
+<pre class = 'prettyprint lang-r'>library(ggplot2)
+library(dplyr)
+
+set.seed(123)</pre>
 
 </article></slide><slide class=''><hgroup><h2>Data for this talk</h2></hgroup><article  id="data-for-this-talk">
 
-<pre class = 'prettyprint lang-r'>library(ggplot2)
-data(diamonds)
-set.seed(123)
-diamonds &lt;- diamonds[sample(500),]
+<pre class = 'prettyprint lang-r'>data(diamonds)
 str(diamonds)</pre>
 
-<pre >## &#39;data.frame&#39;:    500 obs. of  10 variables:
-##  $ carat  : num  0.7 0.32 0.7 0.7 0.86 0.23 0.71 0.9 0.7 0.72 ...
-##  $ cut    : Ord.factor w/ 5 levels &quot;Fair&quot;&lt;&quot;Good&quot;&lt;..: 3 4 2 5 4 3 4 1 3 5 ...
-##  $ color  : Ord.factor w/ 7 levels &quot;D&quot;&lt;&quot;E&quot;&lt;&quot;F&quot;&lt;&quot;G&quot;&lt;..: 3 6 2 5 3 5 3 7 2 1 ...
-##  $ clarity: Ord.factor w/ 8 levels &quot;I1&quot;&lt;&quot;SI2&quot;&lt;&quot;SI1&quot;&lt;..: 5 3 4 3 2 5 5 4 4 3 ...
-##  $ depth  : num  60 61 64.1 61.4 59.3 61 61.8 65 62.9 60.8 ...
-##  $ table  : num  57 59 59 56 62 57 59 56 57 57 ...
-##  $ price  : int  2767 554 2777 2815 2818 353 2790 2815 2793 2782 ...
-##  $ x      : num  5.8 4.39 5.64 5.72 6.36 3.94 5.73 6.08 5.66 5.76 ...
-##  $ y      : num  5.87 4.36 5.59 5.77 6.22 3.96 5.69 6.04 5.69 5.75 ...
-##  $ z      : num  3.5 2.67 3.6 3.53 3.73 2.41 3.53 3.94 3.57 3.5 ...</pre>
+<pre >## &#39;data.frame&#39;:    53940 obs. of  10 variables:
+##  $ carat  : num  0.23 0.21 0.23 0.29 0.31 0.24 0.24 0.26 0.22 0.23 ...
+##  $ cut    : Ord.factor w/ 5 levels &quot;Fair&quot;&lt;&quot;Good&quot;&lt;..: 5 4 2 4 2 3 3 3 1 3 ...
+##  $ color  : Ord.factor w/ 7 levels &quot;D&quot;&lt;&quot;E&quot;&lt;&quot;F&quot;&lt;&quot;G&quot;&lt;..: 2 2 2 6 7 7 6 5 2 5 ...
+##  $ clarity: Ord.factor w/ 8 levels &quot;I1&quot;&lt;&quot;SI2&quot;&lt;&quot;SI1&quot;&lt;..: 2 3 5 4 2 6 7 3 4 5 ...
+##  $ depth  : num  61.5 59.8 56.9 62.4 63.3 62.8 62.3 61.9 65.1 59.4 ...
+##  $ table  : num  55 61 65 58 58 57 57 55 61 61 ...
+##  $ price  : int  326 326 327 334 335 336 336 337 337 338 ...
+##  $ x      : num  3.95 3.89 4.05 4.2 4.34 3.94 3.95 4.07 3.87 4 ...
+##  $ y      : num  3.98 3.84 4.07 4.23 4.35 3.96 3.98 4.11 3.78 4.05 ...
+##  $ z      : num  2.43 2.31 2.31 2.63 2.75 2.48 2.47 2.53 2.49 2.39 ...</pre>
+
+<pre class = 'prettyprint lang-r'>mini_d &lt;- diamonds[sample(500),]</pre>
 
 </article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Standard pairs plot / scatterplot matrix</h2></hgroup><article  id="standard-pairs-plot-scatterplot-matrix">
 
 </article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
 
-<pre class = 'prettyprint lang-r'>plot(diamonds)</pre>
+<pre class = 'prettyprint lang-r'>plot(mini_d)</pre>
 
 <p><img src="Presentation_files/figure-html/pairsplot-1.png" title="" alt="" width="720" height="550" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
 
-<pre class = 'prettyprint lang-r'>library(dplyr)
-select(diamonds, carat, depth, table) %&gt;% plot()</pre>
+<pre class = 'prettyprint lang-r'>mini_d %&gt;% 
+  select(carat, depth, table) %&gt;% 
+  plot()</pre>
 
 <p><img src="Presentation_files/figure-html/subpairsplot-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
+
+</article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
+
+<pre class = 'prettyprint lang-r'>mini_d %&gt;%
+  select(x,y,z) %&gt;%
+  plot()</pre>
+
+<p><img src="Presentation_files/figure-html/subpairsplot2-1.png" title="" alt="" width="720" style="display: block; margin: auto;" /></p>
 
 </article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Generalized pairs plot</h2></hgroup><article  id="generalized-pairs-plot">
 
@@ -161,19 +186,26 @@ select(diamonds, carat, depth, table) %&gt;% plot()</pre>
 </article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
 
 <pre class = 'prettyprint lang-r'>library(gpairs)
-gpairs(diamonds, outer.rot=c(90, 0))</pre>
+gpairs(mini_d, outer.rot=c(90, 0))</pre>
 
 <div class="centered">
 <img src="pairsplot.png" height="500" width="500"></div>
 
 </article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
 
-<pre class = 'prettyprint lang-r'>select(diamonds, carat, cut, color, depth) %&gt;% gpairs(outer.rot=c(90, 0))</pre>
+<pre class = 'prettyprint lang-r'>mini_d %&gt;%
+  select(carat, cut, color, depth) %&gt;% 
+  gpairs(outer.rot=c(90, 0))</pre>
 
 <div class="centered">
 <img src="pairsplot3.png" height="500" width="500"></div>
 
 </article></slide><slide class='segue dark nobackground'><hgroup class = 'auto-fadein'><h2>Grand Tour</h2></hgroup><article  id="grand-tour">
+
+</article></slide><slide class=''><hgroup><h2>John Tukey on the computer <a href='http://bit.ly/prim_9' title=''><a href='http://bit.ly/prim_9' title=''>http://bit.ly/prim_9</a></a></h2></hgroup><article  id="john-tukey-on-the-computer-httpbit.lyprim_9">
+
+<div class="centered">
+<img src="prim9.jpeg" height="500"></div>
 
 </article></slide><slide class=''><hgroup><h2>Grand Tour</h2></hgroup><article  id="grand-tour-1">
 
@@ -186,7 +218,9 @@ gpairs(diamonds, outer.rot=c(90, 0))</pre>
 </article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
 
 <pre class = 'prettyprint lang-r'>library(tourr)
-select(diamonds, carat, depth, table, x, y, z) %&gt;% animate(grand_tour(), display = display_xy(), fps=15)</pre>
+mini_d %&gt;%
+  select(carat, depth, table, x, y, z) %&gt;% 
+  animate(grand_tour(), display = display_xy(), fps=15)</pre>
 
 <div class="scianimator">
 <div id="tourr" style="display: inline-block;">
@@ -223,11 +257,11 @@ select(diamonds, carat, depth, table, x, y, z) %&gt;% animate(grand_tour(), disp
 
 <pre class = 'prettyprint lang-r'>library(nullabor)
 library(ggplot2)
-qplot(carat, depth, data=diamonds) %+%
-  lineup(null_permute(&#39;carat&#39;), diamonds) +
+qplot(carat, depth, data=mini_d) %+%
+  lineup(null_permute(&#39;carat&#39;), mini_d) +
   facet_wrap(~.sample)</pre>
 
-<pre >## decrypt(&quot;OlCE bQTQ Aw GWPATAWw qd&quot;)</pre>
+<pre >## decrypt(&quot;OlCE bQTQ Aw GWPATAWw qI&quot;)</pre>
 
 <p><img src="Presentation_files/figure-html/inference-1.png" title="" alt="" width="720" /></p>
 
@@ -249,7 +283,7 @@ qplot(carat, depth, data=diamonds) %+%
 </article></slide><slide class=''><hgroup><h2></h2></hgroup><article >
 
 <pre class = 'prettyprint lang-r'>library(tabplot)
-tableplot(diamonds)</pre>
+tableplot(mini_d)</pre>
 
 <p><img src="Presentation_files/figure-html/unnamed-chunk-3-1.png" title="" alt="" width="720" /></p>
 
