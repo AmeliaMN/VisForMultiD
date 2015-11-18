@@ -144,8 +144,8 @@ Wickham, H., Cook, D., Hofmann, H., and Buja, A. (2010). Graphical inference for
 ```{r inference}
 library(nullabor)
 library(ggplot2)
-qplot(carat, depth, data=mini_d) %+%
-  lineup(null_permute('carat'), mini_d) +
+qplot(price, x, data=larger_diamonds) %+%
+  lineup(null_permute('x'), larger_diamonds) +
   facet_wrap(~.sample)
 ```
 
